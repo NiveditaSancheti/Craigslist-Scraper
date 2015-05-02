@@ -1,74 +1,640 @@
-<div class="container">
-  <p id="notice"><%= notice %></p>
 
-  <p>
-    <strong>Heading : </strong>
-    <%= @post.heading %>
-  </p>
+<link rel="stylesheet" href="/assets/tipped.css">
+<link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
 
-  <p>
-    <strong>Body : </strong>
-    <%= @post.body %>
-  </p>
+<script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-  <p>
-    <strong>Price : </strong>
-    <%= @post.price %>
-  </p>
+<script type="text/javascript" src="/assets/jquery.raty.js"></script>
 
-  <p><strong>State : </strong><%= @post.state %></p>
-  <p><strong>City : </strong><%= @post.city %></p>
-  <p><strong>Neighbourhood : </strong><%= @post.neighborhood %></p>
-  <p><strong>Zip : </strong><%= @post.zipcode %></p>
-  <p><strong>Phone : </strong><%= @post.phone %></p>
-  <p><strong>Color : </strong><%= @post.paint_color %></p>
-  <p><strong>Drive : </strong><%= @post.drive %></p>
-  <p><strong>Year : </strong><%= @post.year %></p>
-  <p><strong>Flagged Status : </strong><%= @post.flagged_status %></p>
-   <p><strong>Fuel : </strong><%= @post.fuel_vehicle %></p>
-   <p><strong>Make : </strong><%= @post.make_vehicle %></p>
-   <p><strong>Model : </strong><%= @post.model_vehicle %></p>
-   <p><strong>Title Status : </strong><%= @post.title_status %></p>
-   <p><strong>Transmission : </strong><%= @post.transmission %></p>
-   <p><strong>Rating : </strong><div class="star-rating" data-score= <%= @post.rating %> ></div></p>
-   <p><strong>Mileage : </strong><%= @post.mileage %></p>
-   <p><strong>Source : </strong><%= @post.account_id %></p>
-   <p><strong>Location : </strong><%= @post.source_map_google %></p>
-   <div class="carousel" id="carousal">
-    <% @images.each do |image| %>
-        <%= image_tag image.url %>
-      <% end %>
+  <style>
+#accordion-resizer {
+ padding: 10px;
+ width: 99%;
+ height: 550px;
+ background: '#d5d5d5';
+ font: bold 14px Calibri;
+}
+</style>
+<script>
+$(function() {
+ $( "#accordion" ).accordion({
+   heightStyle: "fill",
+
+ });
+});
+
+// $(function() {
+//   $( "#accordion-resizer" ).resizable({
+//     minHeight: 140,
+//     minWidth: 200,
+//     resize: function() {
+//       $( "#accordion" ).accordion( "refresh" );
+//     }
+//   });
+// });
+</script>
+<%= render 'layouts/recommendation' %>
+
+
+<p id="notice"><%= notice %>
+
+<!-- <div class="container"> -->
+
+  <div class="header">
+      <h1>
+        <b><%= @post.heading %></b>
+      </h1>
+      <%= link_to @post.external_url, @post.external_url %>
+
+      <div align = "right">
+      <font size="5px"><b><%= link_to 'Back', posts_path %></b></font>
+    </div>
   </div>
-  <p>
-    <strong>External url : </strong>
-    <%= @post.external_url %>
-  </p>
 
-  <p>
-    <strong>Timestamp : </strong>
-    <%= @post.timestamp %>
-  </p>
+  <div class="row">
 
-  <%= link_to 'Edit', edit_post_path(@post) %> |
-  <%= link_to 'Back', posts_path %>
+    <div class="col-md-7" id="post-images">
+      <% if @images.blank? %>
+        <%= image_tag "http://www.countrytravelmart.com/images/car-default.png", class: "thumbnail" %>
+      <% else %>
+        <div class="carousel" id="carousalImg" style="width:800px; margin:0 auto;">
+         <% @images.each do |image| %>
+           <%= image_tag image.url %>
+         <% end %>
+       <% end %>
+        </div>
+        <br><br>
+
+      <div style="width:85%" align="center">
+        <div id="container-gauge1" style="min-width: 400px; max-width: 250px; height: 300px; float: left ; margin: 0 auto"></div>
+        <div id="container-gauge2" style="min-width: 400px; max-width: 250px; height: 300px; float: left; margin: 0 auto"></div>
+      </div>
+
+    </div>
+
+
+
+
+    <div class="col-md-5">
+
+
+
+<div id="accordion-resizer" class="ui-widget-content">
+  <div id="accordion">
+    <h3>Owner Information</h3>
+    <div>
+      <p>
+        <% if @post.account_id.present? %>
+          Source : <%= @post.account_id %><br>
+        <% end %>
+
+        <% if @post.state.present? %>
+          State : <%= @post.state %><br>
+        <% end %>
+
+        <% if @post.city.present? %>
+          City : <%= @post.city %><br>
+        <% end %>
+
+        <% if @post.neighborhood.present? %>
+            Neighbourhood : <%= @post.neighborhood %><br>
+        <% end %>
+
+        <% if @post.zipcode.present? %>
+          Zip : <%= @post.zipcode %><br>
+        <% end %>
+
+        <% if @post.phone.present? %>
+          Phone : <%= @post.phone %><br>
+        <% end %>
+
+      <% if @post.source_map_google.present? %>
+          Location (Click on link to see it on Google Map): <%= link_to @post.source_map_google, @post.source_map_google %><br>
+        <% end %>
+
+      </p>
+    </div>
+    <h3>Description</h3>
+    <div>
+      <p>
+        <%= @post.body %><br><br>
+        <!-- Rating : <div class="star-rating" data-score= <%= @post.rating %> ></div>-->
+      </p>
+    </div>
+    <h3>Car Information</h3>
+    <div>
+        <p>
+          <% if @post.price.present? %>
+            Price : <%= number_to_currency(@post.price, precision:0) %><br>
+            Last Updated : <%= "#{time_ago_in_words(Time.at(@post.created_date.to_i))} ago" %><br>
+          <% end %>
+
+          <% if @post.paint_color.present? %>
+            Color : <%= @post.paint_color %><br>
+          <% end %>
+
+          <% if @post.drive.present? %>
+            Drive : <%= @post.drive %><br>
+          <% end %>
+
+          <% if @post.year.present? %>
+            Year : <%= @post.year %><br>
+          <% end %>
+
+          <% if @post.flagged_status.present? %>
+            Flagged Status : <%= @post.flagged_status %><br>
+            <!-- <script>
+              $.notify("Please Note : This might be a potentially Fraud Ad", "error");
+            </script> -->
+          <% end %>
+
+          <% if @post.isDuplicate.present? %>
+            Duplicate Count : <%= @post.isDuplicate %><br>
+            <!-- <script>
+              $.notify("Please Note : This is a duplicate Ad", "warn");
+            </script> -->
+          <% end %>
+
+          <% if @post.fuel_vehicle.present? %>
+            Fuel : <%= @post.fuel_vehicle %><br>
+          <% end %>
+
+          <% if @post.make_vehicle.present? %>
+            Make : <%= @post.make_vehicle %><br>
+          <% end %>
+
+          <% if @post.model_vehicle.present? %>
+            Model : <%= @post.model_vehicle %><br>
+          <% end %>
+
+          <% if @post.title_status.present? %>
+            Title Status : <%= @post.title_status %><br>
+          <% end %>
+
+          <% if @post.transmission.present? %>
+            Transmission : <%= @post.transmission %><br>
+          <% end %>
+
+          <% if @post.mileage.present? %>
+            Mileage : <%= @post.mileage %><br>
+          <% end %>
+
+
+        </p>
+    </div>
+    <h3>Text Analysis and Trust Value</h3>
+    <div>
+      <div class="boxed" id="Trust"><b>Trust :
+      <%=
+          require 'uri'
+          require 'json'
+          # Creating the dynamic URI for API Call
+          myString = String("https://api.dandelion.eu/datatxt/nex/v1/?text="+@post.body+"&$app_id=f374474a&$app_key=5fabe2f04bdfc346d276551c368080c5")
+          # Encoding URI to understand special characters
+          encoded_url = URI.encode(myString)
+          # HTTParty enables the HTTP commands in ruby
+          response = HTTParty.get(URI.parse(encoded_url))
+          obj = JSON.parse(response.body)["annotations"]
+          i=0
+          sum =0
+          if obj.present?
+            arrayLength = obj.length
+            while i < arrayLength do
+              @x = obj[i]["confidence"]
+              sum = sum + @x
+              i += 1
+            end
+            sum = sum / arrayLength
+            if @post.isDuplicate.present?
+              sum = (sum.round(2) * 100) - 20
+            end
+            if @post.flagged_status.present?
+              if sum < 1
+                sum = (sum.round(2) * 100) - 30
+              else
+                sum = sum - 30
+              end
+            else
+              sum = sum.round(2) * 100
+            end
+          else
+            sum = 'The car details are vaguely mentioned to generate a value'
+          end
+        %></b>
+      </div><br>
+      *The trust value is calculated using information provided by the ad postee, and the depth of information.<br>
+
+      <br>
+
+        <div class="boxed" id="textAnalysis"><b>Text Analysis :
+        <%=
+          require 'json'
+          require './app/analysis/textanalysis.rb'
+          TextAnalysis.loadDefaults
+          TextAnalysis.threshold = 0.5
+          analyzer = TextAnalysis.new
+          analyzer.getAnalysis @post.body
+          analysis_score = ((analyzer.getScore @post.body).round(2)*100)%100
+        %>
+        <script>
+          Tipped.create('#textAnalysis', 'This analysis is based on the body text, which identifies the weight of keywords', { position: 'topRight' });
+        </script>
+      </div></b>
+      <br>
+      *Test analysis is based on the analysis of the post body provided by the seller. This is in comparison
+    </div>
+  </div>
 </div>
 
-<script>
- $('.star-rating').raty({
-    path: '/assets',
-    readOnly:true,
-    score: function() {
-      return $(this).attr('data-score');
-    }
+<br>
+<% if @post.year.present?  and @post.model_vehicle != "Other" and @post.make_vehicle != "Other" %>
+<div class = "row" align="center">
+  <button type="submit" class="btn btn-primary" id = "getPrice">Get Price & reviews</button>
+</div>
+<% end %>
+<% if @post.year.present?  and @post.model_vehicle != "Other" and @post.make_vehicle != "Other" %>
+
+<div class="basic-info" id="price-body"></div>
+<div class="basic-info" id="body-reviews"><br></div>
+<% end %>
+
+
+      </div>
+
+
+
+    </div>
+
+
+
+<!-- </div> -->
+
+<script type="text/javascript">
+
+
+
+// Displaying Star Rating
+  $('.star-rating').raty({
+     path: '/assets',
+     readOnly:true,
+     score: function() {
+       return $(this).attr('data-score');
+     }
+   });
+
+// Enables image slider
+   $('#carousalImg').cycle({
+     fx:      'scrollRight',
+     next:   '#right',
+     timeout:  3000,
+     easing:  'easeInOutBack'
+   });
+
+
+// Displays the Trust Value Gauge
+   $(function () {
+     new Highcharts.Chart({
+
+        chart: {
+            type: 'gauge',
+            renderTo: 'container-gauge1',
+            plotBackgroundColor: 'rgba(255,255,255,0)',
+            plotBackgroundImage: null,
+            plotBorderWidth: 0,
+            plotShadow: false,
+            backgroundColor: 'rgba(255,255,255,0.1)'
+        },
+
+        title: {
+            text: 'Trust Value'
+        },
+
+        pane: {
+            startAngle: -125,
+            endAngle: 125,
+            background: [{
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#FFF'],
+                        [1, '#333']
+                    ]
+                },
+                borderWidth: 0,
+                outerRadius: '109%'
+            }, {
+                backgroundColor: {
+                    linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                    stops: [
+                        [0, '#333'],
+                        [1, '#FFF']
+                    ]
+                },
+                borderWidth: 1,
+                outerRadius: '107%'
+            }, {
+                // default background
+            }, {
+                backgroundColor: '#DDD',
+                borderWidth: 0,
+                outerRadius: '105%',
+                innerRadius: '103%'
+            }]
+        },
+
+        // the value axis
+        yAxis: {
+            min: 0,
+            max: 100,
+
+            minorTickInterval: 'auto',
+            minorTickWidth: 1,
+            minorTickLength: 10,
+            minorTickPosition: 'inside',
+            minorTickColor: '#666',
+
+            tickPixelInterval: 30,
+            tickWidth: 2,
+            tickPosition: 'inside',
+            tickLength: 10,
+            tickColor: '#666',
+            labels: {
+                step: 2,
+                rotation: 'auto'
+            },
+            title: {
+                text: 'Trust Score'
+            },
+            plotBands: [{
+                from: 0,
+                to: 40,
+                color: '#DF5353' // green
+            }, {
+                from: 40,
+                to: 70,
+                color: '#DDDF0D' // yellow
+            }, {
+                from: 70,
+                to: 100,
+                color: '#55BF3B' // red
+            }]
+        },
+
+        series: [{
+            name: 'Score',
+            data: [<%= sum %>],
+            tooltip: {
+                valueSuffix: ''
+            }
+        }]
+
+    });
   });
 
-  $('#carousal').cycle({
-      fx:      'scrollLeft',
-      next:   '#carousal',
-      timeout:  3000,
-      easing:  'easeInOutBack'
+  // Displays  the Text Ana
+  $(function () {
+    new Highcharts.Chart({
+
+       chart: {
+           type: 'gauge',
+           renderTo: 'container-gauge2',
+           plotBackgroundColor: 'rgba(255,255,255,0)',
+           plotBackgroundImage: null,
+           plotBorderWidth: 0,
+           plotShadow: false,
+           backgroundColor: 'rgba(255,255,255,0.1)'
+       },
+
+       title: {
+           text: 'Text Analysis'
+       },
+
+       pane: {
+           startAngle: -125,
+           endAngle: 125,
+           background: [{
+               backgroundColor: {
+                   linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                   stops: [
+                       [0, '#FFF'],
+                       [1, '#333']
+                   ]
+               },
+               borderWidth: 0,
+               outerRadius: '109%'
+           }, {
+               backgroundColor: {
+                   linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 },
+                   stops: [
+                       [0, '#333'],
+                       [1, '#FFF']
+                   ]
+               },
+               borderWidth: 1,
+               outerRadius: '107%'
+           }, {
+               // default background
+           }, {
+               backgroundColor: '#DDD',
+               borderWidth: 0,
+               outerRadius: '105%',
+               innerRadius: '103%'
+           }]
+       },
+
+       // the value axis
+       yAxis: {
+           min: 0,
+           max: 100,
+
+           minorTickInterval: 'auto',
+           minorTickWidth: 1,
+           minorTickLength: 10,
+           minorTickPosition: 'inside',
+           minorTickColor: '#666',
+
+           tickPixelInterval: 30,
+           tickWidth: 2,
+           tickPosition: 'inside',
+           tickLength: 10,
+           tickColor: '#666',
+           labels: {
+               step: 2,
+               rotation: 'auto'
+           },
+           title: {
+               text: 'Analysis Score'
+           },
+           plotBands: [{
+               from: 0,
+               to: 40,
+               color: '#DF5353' // green
+           }, {
+               from: 40,
+               to: 70,
+               color: '#DDDF0D' // yellow
+           }, {
+               from: 70,
+               to: 100,
+               color: '#55BF3B' // red
+           }]
+       },
+
+       series: [{
+           name: 'Score',
+           data: [<%= analysis_score %>],
+           tooltip: {
+               valueSuffix: ''
+           }
+       }]
+
+   });
   });
 
+  <% if @post.flagged_status.present? %>
+    // <%= @post.flagged_status %><br>
+    // <script>
+      $.notify("Please Note : This might be a potentially Fraud Ad", "error");
+    // </script>
+  <% end %>
+
+  <% if @post.isDuplicate == 1 %>
+    // <%= @post.isDuplicate %><br>
+    // <script>
+      $.notify("Please Note : This is a duplicate Ad", "warn");
+    // </script>
+  <% end %>
 
 
 </script>
+
+
+<div id="results-body"></div>
+
+<!-- Scripts starts here -->
+<script type="text/javascript" src="/assets/solid-gauge.js"></script>
+<script type="text/javascript" src="/assets/notify.js"></script>
+<script type="text/javascript" src="/assets/tipped.js"></script>
+<script type="text/javascript" src="/assets/highcharts-more.js"></script>
+
+<script type="text/javascript" src="/assets/edmunds.api.sdk.js"></script>
+<script type="text/javascript">
+    var styleId;
+    window.sdkAsyncInit = function() {
+      var res = new EDMUNDSAPI('sg4s5b4fqc4tybh39vsjyew7');
+      var options = {};
+
+      function success(res) {
+        var body = document.getElementById('results-body');
+        styleId = res.styles[0].id;
+      }
+
+      function fail(data) {
+        console.log(data);
+      }
+      // Fire the API call
+      res.api('/api/vehicle/v2/<%=@post.make_vehicle%>/<%=@post.model_vehicle%>/<%=@post.year%>', options, success, fail);
+
+        };
+
+        $('#price-body').hide();
+        $('#body-reviews').hide();
+
+
+
+    $('#getPrice').click( function(){
+
+      var resPrice = new EDMUNDSAPI('sg4s5b4fqc4tybh39vsjyew7');
+
+    // Optional parameters
+    var optionsPrice = {
+      "styleid": styleId,
+      "zip": <%= @post.zipcode %>
+    };
+
+    // Callback function to be called when the API response is returned
+    function successPrice(resPrice) {
+      var body = document.getElementById('price-body');
+      body.innerHTML = "The TMV® price is: " + resPrice.tmv.nationalBasePrice.usedPrivateParty;
+
+    }
+
+    // Oops, Houston we have a problem!
+    function failPrice(data) {
+      console.log(data);
+    }
+    // Fire the API call
+
+    resPrice.api('/v1/api/tmv/tmvservice/calculatetypicallyequippedusedtmv', optionsPrice, successPrice, failPrice);
+
+    //Third API Call to get the car average rating and car reviews
+    // Instantiate the SDK
+      var resReviews = new EDMUNDSAPI('sg4s5b4fqc4tybh39vsjyew7');
+      // Optional parameters
+      var optionsReviews = {};
+      // Callback function to be called when the API response is returned
+      function successReviews(resReviews) {
+        var body = document.getElementById('body-reviews');
+        //var averageRating = resReviews.averageRating;
+        var resReviewsLength = resReviews.reviews.length;
+        var num = 0;
+        if(num < resReviewsLength) {
+          body.innerHTML = "The consumer review for this vehicle is: "+resReviews.reviews[num++].text;
+        }
+
+
+      }
+      // Oops, Houston we have a problem!
+      function failReviews(data) {
+        console.log(data);
+      }
+      // Fire the API call
+
+      var query ='/api/vehiclereviews/v2/styles/'+styleId;
+
+      resReviews.api(query, optionsReviews, successReviews, failReviews);
+
+
+      $('#price-body').show();
+      $('#body-reviews').show();
+
+    }
+  );
+
+
+    // Load the SDK asynchronously
+    (function(d, s, id){
+        var js, sdkjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "/assets/edmunds.api.sdk.js";
+        sdkjs.parentNode.insertBefore(js, sdkjs);
+     }(document, 'script', 'edmunds-jssdk'));
+
+  </script>
+
+
+  <script>
+
+  $(function () {
+
+   @post.body;
+
+   x = {}
+   (1..100000).each do |i|
+     x["key#{i}"] = i
+   end
+
+  Hash[x.map {|k, v| [k.to_sym, v.to_s] }]
+
+   t=Time.now
+   puts x.hmap{ |k,v| { k.to_sym => v.to_s  } }
+   puts "#{Time.now - t} seconds"
+
+  h2 = eval("{:body => {:label => 'Body', :collection => return_misc_definitions('isDuplicate') } }")
+
+  if(h1 == h2){
+   updateDb();
+  }
+  }
+  </script>

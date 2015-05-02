@@ -2,20 +2,21 @@
 <html>
 <head>
   <title>Get My Ride</title>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+  
+  <script type="text/javascript" src="/assets/jquery.cycle.all.js"></script>
+  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+  <script type="text/javascript" src="/assets/jquery.raty.js"></script>
   <%= render 'layouts/bootstrapcdn' %>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <%= csrf_meta_tags %>
-  <script type="text/javascript" src="/assets/jquery.easing.min.js"></script>
-  <script type="text/javascript" src="/assets/jquery.easing.compatibility.js"> </script>
-  <script type="text/javascript" src="/assets/jquery.cycle.all.js"></script>
-  <script type="text/javascript" src="/assets/jquery.easing.1.3.js"></script>
-  <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-</head>
+  </head>
 <body>
 
 <%= render 'layouts/navbar' %>
 <div class="container-fluid">
+
 <%= yield %>
 </div>
 <%= render 'layouts/footer' %>

@@ -13,7 +13,7 @@ class PostsController < ApplicationController
   def index
 
 
-    @posts = Post.order('timestamp DESC').paginate(:page => params[:page], :per_page => 40)
+    @posts = Post.order('created_date DESC').paginate(:page => params[:page], :per_page => 40)
 
     @posts = @posts.where(year: params["year"]) if params["year"].present?
     @posts = @posts.where("city like ?", "%#{params["city"]}%") if params["city"].present?
@@ -26,13 +26,17 @@ class PostsController < ApplicationController
 
     @posts = @posts.where(make_vehicle: params["make_vehicle"]) if params["make_vehicle"].present?
     @posts = @posts.where(model_vehicle: params["model_vehicle"]) if params["model_vehicle"].present?
+
+    @posts = @posts.where(type_vehicle: params["type_vehicle"]) if params["type_vehicle"].present?
+
     q = "%#{params["heading"]}%"
     @posts = @posts.where("heading like ? or body like ? or fuel_vehicle like ?  or city like ? or neighborhood like ?  or paint_color like ? or title_status like ? or transmission like ? ",q,q,q,q,q,q,q,q) if params["heading"].present?
-    @posts = @posts.order("year DESC, rating DESC, price ASC, created_date DESC")
+    @posts = @posts.order("likeCount DESC,year DESC, dislikeCount ASC, price ASC, created_date DESC")
     # @posts = @posts.order(:year)
     # @posts = @posts.order(:rating)
     # @posts = @posts.order(:created_date).reverse_order
 
+    @postsHashValue = @posts.select(:body).where("isDuplicate >= ", 0);
 
   end
 
@@ -40,6 +44,10 @@ class PostsController < ApplicationController
   # GET /posts/1.json
   def show
     @images = @post.images
+    @postRecommendation = Post.where("rating = 5 and title_status= ? and heading not like '%span%' and make_vehicle in ('Nissan','Ford','Toyota','Hyundai')","clean").order('created_date DESC, price asc').first(5)
+  @postRecommendation = Post.where("make_vehicle like ? and rating in (3,4,5) ", "%#{params["make_vehicle"]}%").order('rating DESC, created_date DESC, price DESC ').first(5) if params["make_vehicle"].present?
+
+
   end
 
   # GET /posts/new

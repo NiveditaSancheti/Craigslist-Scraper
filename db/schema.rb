@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150421233249) do
+ActiveRecord::Schema.define(version: 20150426023735) do
 
   create_table "anchors", force: true do |t|
     t.string   "value"
@@ -66,6 +66,24 @@ ActiveRecord::Schema.define(version: 20150421233249) do
     t.string   "account_id"
     t.string   "source_map_google"
     t.string   "created_date"
+    t.integer  "user_rating"
+    t.datetime "created_timestamp"
+    t.string   "created_month"
+    t.integer  "created_year"
+    t.integer  "created_day"
+    t.integer  "duplicateCount"
+    t.string   "dummyStr1"
+    t.string   "dummyStr2"
+    t.string   "dummyStr3"
+    t.integer  "dummyInt1"
+    t.integer  "dummyInt2"
+    t.integer  "dummyInt3"
+    t.string   "created_on"
+    t.string   "vin_no"
+    t.string   "size"
+    t.integer  "likeCount"
+    t.integer  "dislikeCount"
+    t.string   "source_heading"
   end
 
   create_table "users", force: true do |t|

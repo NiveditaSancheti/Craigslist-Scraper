@@ -4,16 +4,16 @@
   <div class ="row">
     <div class="col-md-2">
       <div class = "row">
-        <%= label_tag :year %>
+        <%= label_tag "Model Year" %>
       </div>
       <div class = "row">
-        <%= select_tag(:year, options_from_collection_for_select(Post.select(:year).uniq.order(:year).reverse_order, :year, :year, params[:year]), { include_blank: true ,class: "form-control input-sm" }) %>
+        <%= select_tag(:year, options_from_collection_for_select(Post.select(:year).where("year is not null").uniq.order(:year).reverse_order, :year, :year, params[:year]), { include_blank: true ,class: "form-control input-sm" }) %>
       </div>
       <div class = "row">
         <%= label_tag :City %>
       </div>
       <div class = "row">
-        <%= select_tag(:city, options_from_collection_for_select(Post.select(:city).uniq.order(:city), :city, :city, params[:city]), { include_blank: true ,class: "form-control input-sm" }) %>
+        <%= select_tag(:city, options_from_collection_for_select(Post.select(:city).where("city is not null").uniq.order(:city), :city, :city, params[:city]), { include_blank: true ,class: "form-control input-sm" }) %>
       </div>
     </div>
     <!--<%= text_field_tag :year%> -->
@@ -44,6 +44,11 @@
     <div class="col-md-2">
       <div class="row"> <%= label_tag :general %>   </div>
       <div class="row"> <%= text_field_tag :heading, params["heading"], class: "form-control input-sm" %> </div>
+      <div class="row"> <%= label_tag :Type %>   </div>
+      <div class="row"> <%= select_tag(:type_vehicle, options_from_collection_for_select(Post.select(:type_vehicle).where("type_vehicle is not null").uniq.order(:type_vehicle), :type_vehicle, :type_vehicle, params[:type_vehicle]), { include_blank: true ,class: "form-control input-sm" }) %>
+
+      </div>
+
     </div>
   </div>
 

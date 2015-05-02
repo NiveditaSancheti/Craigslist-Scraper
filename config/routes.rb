@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   get 'pages/contact'
 
+
+
   # resources :advertises
 
   # resources :advertisements
@@ -13,7 +15,9 @@ Rails.application.routes.draw do
   # resources :ads
 
   # resources :post1s
-
+  get 'dashboard/hbar'
+  get 'posts/recommendation'
+  
   resources :posts
 
 

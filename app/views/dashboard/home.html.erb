@@ -1,267 +1,408 @@
 <%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"%>
 <%= javascript_include_tag "highcharts" %>
+
 <script src="http://code.highcharts.com/highcharts-more.js"></script>
 <script src="http://code.highcharts.com/modules/exporting.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<script src="http://www.jqueryscript.net/demo/Awesome-Tag-Cloud-Plugin-with-jQuery-Html5-Canvas-awesomeCloud/jquery.awesomeCloud-0.2.js"></script>
+<script type="text/javascript" src="/assets/jquery.cycle.all.js"></script>
+<style>
+.grow { transition: all .2s ease-in-out; }
+.grow:hover { transform: scale(1.1); }
+/*#fixed {
+  position: fixed;
+  top: 300px;
+  right: 0px !important;
+  width: 300px;
+  background-color: white;
+  border : 2px black !important;
+  border-radius: 10px;
+  z-index:500;
+  padding: 10px;
+
+}
+
+.img {
+  height : 100px !important;
+  width : 100px !important;
+
+}*/
+</style>
+
 
 <h1>Dashboard</h1>
 
-<div class="container-fluid">
-  <div class="row">
-    <div class="col-md-6">
-      <div id="postsLine" style="width: 400px; height: 500px;"></div>
+<%= render 'layouts/recommendation' %>
 
-    </div>
-    <div class="col-md-6">
-      <div id="postsHBar" style="width: 400px; height: 500px;"></div>
-      <br/>
-    </div>
+
+<div class = "row">
+  <div class="col-md-6">
+      <%= form_tag("/", method: "get") do %>
+      <select id="avgPriceSelect" name="avgPriceSelect" onchange="this.form.submit()">
+      <% @postPriceSelectModel.each do |post| %>
+       <option value="<%= post.model_vehicle %>" ><%= post.make_vehicle %> - <%= post.model_vehicle %> </option>
+      <% end %>
+      </select>
+         <div id="AvgPriceBar" style="width: 100%; height: 150%;" class="grow"></div>
+       <% end %>
+
+  </div>
+  <div class="col-md-6">
+         <br/>
+         <div id="postsLineC" style="width: 100%; height: 150%;" class="grow"></div>
   </div>
 </div>
 
-
-<!-- bubble need highcharts-more.js for bubble chart-->
-<div id="bubble" style="width: 400px; height: 400px;"></div>
+<br/>
 <br/>
 
+<div class = "row">
+      <div class="col-md-6">
+        <%= form_tag("/", method: "get") do %>
+        <%= select_tag(:make_vehicle, options_from_collection_for_select(Post.select(:make_vehicle).where("flagged_status = 1").uniq.order(:make_vehicle),
+          :make_vehicle, :make_vehicle, params[:make_vehicle]), { include_blank: true ,class: "form-control input-sm",
+          :onchange => "this.form.submit();" }) %>
+        <div id="postsLineFraud" style="width: 100%; height: 150%;" class="grow"></div>
+        <% end %>
+      </div>
+
+      <div class="col-md-6">
+         <%= form_tag("/", method: "get") do %>
+        <select onchange="this.form.submit()" name="hBarParam" width="100%" >
+          <option value="nothing"></option>
+        <option value="Today">Today</option>
+        <option value="Weekly">This Week</option>
+        <option value="Monthly">This Month</option>
+        </select>
+
+       <div id="postsHBar" style="width: 100%; height: 150%;" class="grow"></div>
+       <% end %>
+
+     </div>
+</div>
+
+<%= form_tag("/", method: "get") do %>
+  <div class="row">
+    <div class="col-md-6" id="post-images">
+        <%= select_tag(:make_vehicle, options_from_collection_for_select(Post.select(:make_vehicle).where(city: ["Santa Clara","Sunnyvale","South San Francisco","San Jose","San Francisco","Sacramento","Roseville","Hayward","Redwood city","Oakland","Menlo park","Half moon bay","Fremont","Dublin","Daly city","Cupertino"]).uniq.order(:make_vehicle),:make_vehicle, :make_vehicle, params[:make_vehicle]), { include_blank: true ,class: "form-control input-sm",:onchange => "this.form.submit();" }) %>
+      <!-- <div id="containerCity" style="min-width: 600px; height: 600px; max-width: 600px; margin: 0 auto"></div> -->
+       <div id="containerCity" style="width: 100%; height: 150%;" class="grow"></div>
+
+    </div>
+    <div class="col-md-6" id="post-images">
+      <div id="demo" class="wordcloud grow">
+        <% @postsTagCloud.each do |make_vehicle , count_all| %>
+          <span data-weight= <%= count_all.to_s %> > <a href="/posts?make_vehicle=<%= make_vehicle %>"> <%= make_vehicle %> </a></span>
+        <% end %>
+      </div>
+    </div>
+  </div>
+
+<% end %>
 
 
-<div id="container" style="min-width: 310px; height: 400px; max-width: 600px; margin: 0 auto"></div>
-<br/>
 
+
+
+
+
+
+
+  <!-- Horizontal Bar Chart -->
 
 
 <script>
-//  -- select count of vehicles
-$(function () {
-   new Highcharts.Chart({
+  $(function () {
+    new Highcharts.Chart({
+          chart: {
+              type: 'bar',
+              renderTo: 'postsHBar',
+              backgroundColor:'#d5d5d5',
+       plotBackgroundColor:'#fff',
+       borderRadius:'20',
+       borderColor: '#000',
+       borderWidth: '2',
+       spacingRight: 50,
+       spacingTop: 20
 
-        chart: {
-            type: 'bubble',
-            zoomType: 'xy',
-            renderTo: 'bubble',
+          },
+          title: {
+              text: 'Conditions of Most selling Cars'
+          },
+          subtitle: {
+              text: 'Source: CraigsList'
+          },
+          xAxis: {
+              categories: <%= raw @postsHBar.map{|p| p.make_vehicle}.map(&:to_s) %>,
+          },
+          yAxis: {
+              min: 0,
+              title: {
+                  text: 'Counts',
+                  align: 'high'
+              },
+              labels: {
+                  overflow: 'justify'
+              }
+          },
+          tooltip: {
+              valueSuffix: ' millions'
+          },
+          plotOptions: {
+              bar: {
+                  dataLabels: {
+                      enabled: true
+                  }
+              }
+          },
+          legend: {
+              layout: 'vertical',
+              align: 'right',
+              verticalAlign: 'top',
+              x: -40,
+              y: 100,
+              floating: true,
+              borderWidth: 1,
+              backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
+              shadow: true
+          },
+          credits: {
+              enabled: false
+          },
+         series: [{
+          name: "Clean",
+          data: <%= @postsHBarClean.map{|p|p[1] } %>
+      },
+      {
+          name: "Salvage",
+          data: <%= @postsHBarSalvage.map{|p|p[1] } %>
+      },
+      {
+          name: "Parts Only",
+          data: <%= @postsHBarPartsOnly.map{|p|p[1] } %>
+      },
+      {
+          name: "Rebuilt",
+          data: <%= @postsHBarRebuilt.map{|p|p[1] } %>
+      },
+      {
+          name: "Lien",
+          data: <%= @postsHBarLien.map{|p|p[1] } %>
+      }]
+      });
+  });
+</script>
+
+<script>
+  $(function () {
+    new Highcharts.Chart({
+      chart: {
+        renderTo: 'postsLineC',
+       backgroundColor:'#d5d5d5',
+       plotBackgroundColor:'#fff',
+       borderRadius:'20',
+       borderColor: '#000',
+       borderWidth: '2',
+       spacingRight: 50,
+       spacingTop: 20
+      },
+      title: {
+        text: 'Posts for 2015 According to Car Makes'
+      },
+      xAxis: {
+             categories :  <%= raw @postsLine2015_tag.map{|p|p[0]}.map(&:to_s) %>
         },
-
-        title: {
-            text: 'Highcharts Bubbles'
-        },
-
-        series: [{
-            data: [[10, 2011, 80],[20, 2012, 15],[30, 2013, 20],[40, 2014, 2],[50, 2014, 7]]
-        }, {
-            data: [[25, 10, 87], [2, 75, 59], [11, 54, 8], [86, 55, 93], [5, 3, 58], [90, 63, 44], [91, 33, 17], [97, 3, 56], [15, 67, 48], [54, 25, 81]]
-        }, {
-            data: [[47, 47, 21], [20, 12, 4], [6, 76, 91], [38, 30, 60], [57, 98, 64], [61, 17, 80], [83, 60, 13], [67, 78, 75], [64, 12, 10], [30, 77, 82]]
-        }]
+      yAxis: {
+        title: { text: 'Number of posts'}
+      },
+      series: [{
+        name: "Month",
+        threshold : 0,
+        data: <%= @postsLine2015_C.map{|p|p[1] } %>
+      },
+      {
+        name: "Today",
+        threshold : 0,
+        data: <%= @postsLine2015_M.map{|p|p[1] } %>
+      },
+      {
+        name: "This week",
+        threshold : 0,
+        data: <%= @postsLine2015_W.map{|p|p[1] } %>
+      }
+      ]
     });
+  });
+  </script>
+
+<script>
+$(function () {
+  new Highcharts.Chart({
+        chart: {
+          renderTo: 'containerCity',
+          backgroundColor:'#d5d5d5',
+       //plotBackgroundColor:'#fff',
+       borderRadius:'20',
+       borderColor: '#000',
+       borderWidth: '2',
+       spacingRight: 50,
+       spacingTop: 20
+        },
+        title: {
+          text: "Highest Posting Traffic w.r.t Cities"
+        },
+        tooltip: {
+          pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+          pie: {
+            allowPointSelect: true,
+            cursor: 'pointer',
+            dataLabels: {
+              enabled: true,
+              format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+              style: {
+                  color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+              }
+            }
+          }
+        },
+        series: [{
+          type: 'pie',
+          name: 'make share',
+          data: <%= @postsCityPie.to_json.html_safe -%>
+        }]
+     });
 });
 </script>
 
-
-
-
-
-
-
-
-<!--
-<%= form_tag posts_path, method: :get do %>
-<table>
-<% @posts.each do |year , count_all| %>
-
-<tr>
-
- <td class="center" style="vertical-align:middle">
-
-    <%= year %>  <%= count_all %>
-
-   </td>
-</tr>
-<% end %>
-
-</table>
-<table>
-<% @posts1.each do |year , count_all| %>
-
-<tr>
-
- <td class="center" style="vertical-align:middle">
-
-    <%= year %>  <%= count_all %>
-
-   </td>
-</tr>
-<% end %>
-
-</table>  -->
-
+<!-- Cloud Tag -->
 <script>
-
-$(function () {
-  new Highcharts.Chart({
-    chart: { renderTo: 'postsLine',backgroundColor:null },
-    title: { text: 'Posts per year according to models' },
-    xAxis: {
-
-categories : <%= raw @postsLine.map{|p| p.make_vehicle}.map(&:to_s) %>
-
-    	 },
-    yAxis: {
-      title: { text: 'Number of posts'}
+$(document).ready(function(){
+  $("#demo").awesomeCloud({
+    "size" : {
+        "<a href='http://www.jqueryscript.net/tags.php?/grid/'>grid</a>" : 16, // word spacing, smaller is more tightly packed
+        "factor" : 0, // font resize factor, 0 means automatic
+        "normalize" : false // reduces outliers for more attractive output
     },
-    series: [{
-    	name: "2015",
-    	data: <%= @postsLine2015.map{|p|p[1] } %>
-
+    "color" : {
+        "background" : "rgba(255,255,255,0)", // background color, transparent by default
+        "start" : "#20f", // color of the smallest font, if options.color = "gradient""
+        "end" : "rgb(200,0,0)" // color of the largest font, if options.color = "gradient"
     },
-    {
-        name: "2014",
-        data: <%= @postsLine2014.map{|p|p[1] } %>
-
+    "options" : {
+        "color" : "random-dark", // random-light, random-dark, gradient
+        "rotationRatio" : 0.35, // 0 is all horizontal, 1 is all vertical
+        "printMultiplier" : 3, // set to 3 for nice printer output; higher numbers take longer
+        "sort" : "random" // highest, lowest or random
     },
-    {
-        name: "2013",
-        data: <%= @postsLine2013.map{|p|p[1] } %>
-
-    },
-    {
-        name: "2012",
-        data: <%= @postsLine2012.map{|p|p[1] } %>
-
-    },
-    {
-        name: "2011",
-        data: <%= @postsLine2011.map{|p|p[1] } %>
-
-    }]
-
+    "font" : "'Times New Roman', Times, serif", //  the CSS font-family string
+    "shape" : "square" // circle, square, star or a theta function describing a shape
   });
 });
 </script>
 
-<script type="text/javascript">
+<style type="text/css">
+.wordcloud {
+  border: 1px solid #036;
+  height: 5in;
+  margin: 0.5in auto;
+  padding: 1;
+  page-break-after: always;
+  page-break-inside: avoid;
+  width: 6in;
+}
+</style>
 
-$(function () {
-  new Highcharts.Chart({
-        chart: {
-        	renderTo: 'container',
-            plotBackgroundColor: null,
-            plotBorderWidth: null,
-            plotShadow: false,
-            backgroundColor: null
-        },
-        title: {
-            text: "Browser market shares at a specific website, 2014"
-        },
-        tooltip: {
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
-        },
-        plotOptions: {
-            pie: {
-                allowPointSelect: true,
-                cursor: 'pointer',
-                dataLabels: {
-                    enabled: true,
-                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
-                    style: {
-                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
-                    }
-                }
-            }
-        },
-        series: [{
-            type: 'pie',
-            name: 'make share',
-        	data: <%= @posts2.to_json.html_safe -%>
-        }]
-     });
-});
 
-</script>
+
 
 <script>
-$(function () {
-  new Highcharts.Chart({
+
+    $(function () {
+      new Highcharts.Chart({
         chart: {
-            type: 'bar',
-            renderTo: 'postsHBar',
-            backgroundColor:null
+            renderTo: 'postsLineFraud',
+            backgroundColor:'#d5d5d5',
+       plotBackgroundColor:'#fff',
+       borderRadius:'20',
+       borderColor: '#000',
+       borderWidth: '2',
+       spacingRight: 50,
+       spacingTop: 20
 
-        },
-        title: {
-            text: 'Historic World Population by Region'
-        },
-        subtitle: {
-            text: 'Source: Wikipedia.org'
-        },
-        xAxis: {
-            categories: <%= raw @postsHBar.map{|p| p.make_vehicle}.map(&:to_s) %>,
-
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Population (millions)',
-                align: 'high'
             },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        tooltip: {
-            valueSuffix: ' millions'
-        },
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: true
-                }
-            }
-        },
-        legend: {
-            layout: 'vertical',
-            align: 'right',
-            verticalAlign: 'top',
-            x: -40,
-            y: 100,
-            floating: true,
-            borderWidth: 1,
-            backgroundColor: ((Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF'),
-            shadow: true
-        },
-        credits: {
-            enabled: false
-        },
-       series: [{
-        name: "Clean",
-        data: <%= @postsHBarClean.map{|p|p[1] } %>
+        title: { text: 'Frauds per month according to city' },
+        xAxis: {
 
-    },
-    {
-        name: "Salvage",
-        data: <%= @postsHBarSalvage.map{|p|p[1] } %>
+         categories : <%= raw @postsLineCity.map{|p| p.city}.map(&:to_s) %>
 
-    },
-    {
-        name: "Parts Only",
-        data: <%= @postsHBarPartsOnly.map{|p|p[1] } %>
+           },
+        yAxis: {
+          title: { text: 'Number of posts'}
+        },
+        series: [
+          {
+          name: "January",
+          data: <%= @postsLineJan.map{|p|p[1] } %>
 
-    },
-    {
-        name: "Rebuilt",
-        data: <%= @postsHBarRebuilt.map{|p|p[1] } %>
+        },
+        {
+            name: "February",
+            data: <%= @postsLineFeb.map{|p|p[1] } %>
 
-    },
-    {
-        name: "Lien",
-        data: <%= @postsHBarLien.map{|p|p[1] } %>
+        },
+        {
+            name: "March",
+            data: <%= @postsLineMarch.map{|p|p[1] } %>
 
-    }]
+        },
+        {
+            name: "April",
+            data: <%= @postsLineApril.map{|p|p[1] } %>
+
+        },
+        {
+            name: "May",
+            data: <%= @postsLineMay.map{|p|p[1] } %>
+
+        }
+        ]
+
+      });
     });
-});
-
 </script>
 
 
 
-
-<% end %>
+<script>
+  $(function () {
+    new Highcharts.Chart({
+      chart: {
+        renderTo: 'AvgPriceBar',
+        backgroundColor:'#d5d5d5',
+       plotBackgroundColor:'#fff',
+       borderRadius:'20',
+       borderColor: '#000',
+       borderWidth: '2',
+       spacingRight: 50,
+       spacingTop: 20
+      },
+      title: {
+        text: 'Average car price according to Model-year'
+      },
+      xAxis: {
+             categories :  <%= raw @postsPriceTest.map{|p|p[0]}.map(&:to_s) %>
+        },
+      yAxis: {
+        title: { text: 'Number of posts'}
+      },
+      series: [{
+        name: "Price in $",
+        threshold : 0,
+        data: <%= @postsPriceTest.map{|p|p[1].to_f } %>
+      }
+      ]
+    });
+  });
+  </script>

@@ -1,0 +1,33 @@
+{
+"NumberOfAttributes":{
+   "Attributes":{ body,
+                  heading",
+                  price,
+                  make_vehicle,
+                  model_vehicle,
+                  price,
+                  type_vehicle,
+                  year,
+                  city,
+                  neighbourhood,
+                  mileage,
+                  zip,
+                  phone,
+                  location,
+                  title_status,
+                  color,
+                  fuel_vehcile
+
+            }
+
+},
+"ImageCount":{
+      "Count":5,
+},
+"FlaggedValue":{
+       "Flagged_status":1
+},
+"DuplicateValue":{
+      "is+Duplicate":1
+}
+}

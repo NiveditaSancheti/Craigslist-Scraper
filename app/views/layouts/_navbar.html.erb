@@ -8,7 +8,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="/">G&nbsp;e&nbsp;t&nbsp; &nbsp;M&nbsp;y&nbsp;&nbsp;R&nbsp;i&nbsp;d&nbsp;e</a>
+      <a class="navbar-brand" href="/">Trending Wheels</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -16,10 +16,11 @@
       <ul class="nav navbar-nav">
         <li><%= link_to "Home", posts_home_path %></li>
         <li><%= link_to "Dashboard", root_path %></li>
+      
       </ul>
-      <form class="navbar-form navbar-left" role="search">
+      <form class="navbar-form navbar-left" role="search" action="/posts">
         <div class="form-group">
-          <input type="text" class="form-control" placeholder="Search">
+          <input type="text" class="form-control" placeholder="Search" name="heading" value=<%= params[:heading] %>>
         </div>
         <button type="submit" class="btn btn-default">Submit</button>
       </form>

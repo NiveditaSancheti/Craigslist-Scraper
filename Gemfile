@@ -50,3 +50,8 @@ gem 'will_paginate-bootstrap'
 gem 'devise'
 gem 'pg', group: :production
 gem 'rails_12factor', group: :development
+# Adding 'httpparty for Dandelion API service'
+gem 'httparty'
+
+# Adding 'Sentimental' for sentiment analysis of posted ad
+# gem 'sentimental'
