@@ -2,8 +2,8 @@ class AddNewFieldsToPosts < ActiveRecord::Migration
   def change
     add_column :posts, :user_rating, :integer
     add_column :posts, :created_timestamp, :datetime
+    add_column :posts, :created_date, :string
     add_column :posts, :created_month, :string
-    add_column :posts, :created_on, :date
     add_column :posts, :created_year, :integer
     add_column :posts, :created_day, :integer
     add_column :posts, :duplicateCount, :integer
