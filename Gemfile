@@ -49,7 +49,7 @@ gem 'will_paginate', '~> 3.0.6'
 gem 'will_paginate-bootstrap'
 gem 'devise'
 gem 'pg', group: :production
-gem 'rails_12factor', group: :development
+gem 'rails_12factor', group: :production
 # Adding 'httpparty for Dandelion API service'
 gem 'httparty'
 
