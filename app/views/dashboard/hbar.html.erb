@@ -27,23 +27,27 @@
   //  alert("change called");
 
 
+//
+//     $.get( "/dashboard/hbar",{hBarParam:str}, function( data ) {
+//   // $( ".result" ).html( data );
+//   //  $(".postsHBar").html(data);
+//   alert(1111);
+//  alert(data);
+//
+//
+//
+//
+// //  chart1.redraw();
+//
+//   });
+//
+//     });
 
-    $.get( "/dashboard/hbar?hBarParam="+str, function( data ) {
-  // $( ".result" ).html( data );
-  //  $(".postsHBar").html(data);
-  alert(1111);
- alert(data);
 
 
 
 
-//  chart1.redraw();
-
-  });
-
-    });
-
-
+});
 
 $(function(){
   new Highcharts.Chart({
@@ -123,7 +127,5 @@ $(function(){
 
     }]
     });
-
-});
 
 </script>

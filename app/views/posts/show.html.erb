@@ -4,7 +4,7 @@
 
 <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
 
-<script type="text/javascript" src="/assets/jquery.raty.js"></script>
+<!-- <script type="text/javascript" src="/assets/jquery.raty.js"></script> -->
 
   <style>
 #accordion-resizer {
@@ -12,7 +12,7 @@
  width: 99%;
  height: 550px;
  background: '#d5d5d5';
- font: bold 14px Calibri;
+ font: bold 14px !important;
 }
 </style>
 <script>
@@ -222,8 +222,14 @@ $(function() {
           end
         %></b>
       </div><br>
-      *The trust value is calculated using information provided by the ad postee, and the depth of information.<br>
+      *The trust value is calculated using information provided by the ad postee, and the depth of information.
+      <a href="#postsModal1"  data-toggle="modal" style="color:blue;">
 
+          Click here for more informartion
+      </a>
+
+      <br>
+      <br>
       <br>
 
         <div class="boxed" id="textAnalysis"><b>Text Analysis :
@@ -242,6 +248,10 @@ $(function() {
       </div></b>
       <br>
       *Test analysis is based on the analysis of the post body provided by the seller. This is in comparison
+      <a href="#postsModal2"  data-toggle="modal" style="color:blue;">
+
+          Click here for more informartion
+      </a>
     </div>
   </div>
 </div>
@@ -264,6 +274,38 @@ $(function() {
 
 
     </div>
+
+    <div class="posts-modal modal fade" id="postsModal1" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            Trust Data here Trust Data here Trust Data here
+            Trust Data here Trust Data here Trust Data here
+            Trust Data here Trust Data here Trust Data here
+
+        </div>
+    </div>
+
+    <div class="posts-modal modal fade" id="postsModal2" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-content">
+            <div class="close-modal" data-dismiss="modal">
+                <div class="lr">
+                    <div class="rl">
+                    </div>
+                </div>
+            </div>
+            Text Data here Text Data here Text Data here
+            Text Data here Text Data here Text Data here
+            Text Data here Text Data here Text Data here
+
+
+        </div>
+    </div>
+
 
 
 
@@ -519,6 +561,9 @@ $(function() {
 
 <script type="text/javascript" src="/assets/edmunds.api.sdk.js"></script>
 <script type="text/javascript">
+$(document).ready(function() {
+       // Stuff to do as soon as the DOM is ready
+
     var styleId;
     window.sdkAsyncInit = function() {
       var res = new EDMUNDSAPI('sg4s5b4fqc4tybh39vsjyew7');
@@ -536,6 +581,7 @@ $(function() {
       res.api('/api/vehicle/v2/<%=@post.make_vehicle%>/<%=@post.model_vehicle%>/<%=@post.year%>', options, success, fail);
 
         };
+
 
         $('#price-body').hide();
         $('#body-reviews').hide();
@@ -610,7 +656,7 @@ $(function() {
         js.src = "/assets/edmunds.api.sdk.js";
         sdkjs.parentNode.insertBefore(js, sdkjs);
      }(document, 'script', 'edmunds-jssdk'));
-
+   });
   </script>
 
 
