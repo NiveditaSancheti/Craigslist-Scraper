@@ -279,14 +279,17 @@ $(function() {
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
-                    <div class="rl">
+                    <div class="rl">x
                     </div>
                 </div>
             </div>
-            Trust Data here Trust Data here Trust Data here
-            Trust Data here Trust Data here Trust Data here
-            Trust Data here Trust Data here Trust Data here
-
+            <center>
+  <b>Trust value <b><br><hr><br>gives the credibility value of the overall post.
+  It takes into account the text analysis value calculated by the post body,
+  Number of Attributes and Images provided by the seller of a car.
+  The flagged post and duplicate posts result into a lesser trust value.
+  The posts with the lower trust value can be determined as highly potential fraudulent ads on Craigslist.
+</center>
         </div>
     </div>
 
@@ -294,14 +297,21 @@ $(function() {
         <div class="modal-content">
             <div class="close-modal" data-dismiss="modal">
                 <div class="lr">
-                    <div class="rl">
+                    <div class="rl">x
                     </div>
                 </div>
             </div>
-            Text Data here Text Data here Text Data here
-            Text Data here Text Data here Text Data here
-            Text Data here Text Data here Text Data here
+            <center>
+              <b>Text Analysis</b><br><hr><br>
+This value determines the body content of the post using Semantic Analysis.
 
+This value uses the words described in the body of the post and classifies
+the string token into set of positive and negative words.
+These words are compared to total number of positive and negative words
+ and the text value is calculated. This value shows how well the seller
+ has explained the product. For eg words like Fantastic Fuel efficiency,
+ Good Maintenance, ride of your life give a positive impact of the product resulting into higher text analysis value.
+            </center>
 
         </div>
     </div>
@@ -310,7 +320,11 @@ $(function() {
 
 
 <!-- </div> -->
-
+<script type="text/javascript" src="/assets/solid-gauge.js"></script>
+<script type="text/javascript" src="/assets/notify.js"></script>
+<script type="text/javascript" src="/assets/tipped.js"></script>
+<script type="text/javascript" src="/assets/highcharts-more.js"></script>
+<script type="text/javascript" src="/assets/edmunds.api.sdk.js"></script>
 <script type="text/javascript">
 
 
@@ -554,12 +568,6 @@ $(function() {
 <div id="results-body"></div>
 
 <!-- Scripts starts here -->
-<script type="text/javascript" src="/assets/solid-gauge.js"></script>
-<script type="text/javascript" src="/assets/notify.js"></script>
-<script type="text/javascript" src="/assets/tipped.js"></script>
-<script type="text/javascript" src="/assets/highcharts-more.js"></script>
-
-<script type="text/javascript" src="/assets/edmunds.api.sdk.js"></script>
 <script type="text/javascript">
 $(document).ready(function() {
        // Stuff to do as soon as the DOM is ready
